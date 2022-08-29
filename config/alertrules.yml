@@ -1,0 +1,17 @@
+groups:
+  - name: all
+    rules:
+    - alert: BlackboxEndpointDown
+      expr: probe_success == 0
+      for: 10s
+      labels:
+        severity: "critical"
+      annotations:
+        summary: "Endpoint {{ $labels.instance }} down"
+    - alert: PrometheusTargetDown
+      expr: 100 * (count by(job) (up == 0) / count by(job) (up)) > 10
+      for: 10s
+      labels:
+        severity: warning
+      annotations:
+        summary: '{{ $value }}% of the {{ $labels.job }} targets are down.'
